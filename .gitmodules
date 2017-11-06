@@ -1,0 +1,3 @@
+[submodule "external_lib/zstd"]
+	path = external_lib/zstd
+	url = git@git.motis-project.de:lib/zstd.git
