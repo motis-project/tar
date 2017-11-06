@@ -33,40 +33,46 @@ struct file_reader {
 
 struct zstd_reader {
   explicit zstd_reader(char const* s)
-      : out_{ZSTD_DStreamOutSize()},
-        reader_{s},
-        dstream_{ZSTD_createDStream(), &ZSTD_freeDStream} {
+      : reader_{s},
+        out_{ZSTD_DStreamOutSize()},
+        out_fill_{0},
+        dstream_{ZSTD_createDStream(), &ZSTD_freeDStream},
+        zstd_next_to_read_{dstream_ ? ZSTD_initDStream(dstream_.get()) : 0} {
     verify(dstream_ != nullptr, "ZSTD_createDStream() error");
+    verify(ZSTD_isError(zstd_next_to_read_), "ZSTD_initDStream() error");
   }
 
-  std::optional<std::string_view> read(size_t const s) {
-    size_t const init_result = ZSTD_initDStream(dstream_.get());
-    verify(ZSTD_isError(init_result), "ZSTD_initDStream() error");
-
-    size_t to_read = init_result;
-    for (auto[buf_in, read] = reader_.read(to_read); read != 0;
-         std::tie(buf_in, read) = reader_.read(to_read)) {
+  void read_to_out(size_t const min_size) {
+    out_.resize(out_fill_ + ZSTD_DStreamOutSize() / ZSTD_DStreamOutSize());
+    for (auto[buf_in, read] = reader_.read(zstd_next_to_read_);
+         read != 0 && out_fill_ < min_size;
+         std::tie(buf_in, read) = reader_.read(zstd_next_to_read_)) {
       ZSTD_inBuffer input = {buf_in, read, 0};
 
       while (input.pos < input.size) {
-        ZSTD_outBuffer output = {out_.data(), out_.size(), 0};
-        to_read = ZSTD_decompressStream(dstream_.get(), &output, &input);
-        verify(!ZSTD_isError(to_read), ZSTD_getErrorName(to_read));
-        // {buffOut, output.pos}
+        auto output =
+            ZSTD_outBuffer{out_.data() + out_fill_, out_.size() - out_fill_, 0};
+        zstd_next_to_read_ =
+            ZSTD_decompressStream(dstream_.get(), &output, &input);
+        verify(!ZSTD_isError(zstd_next_to_read_),
+               ZSTD_getErrorName(zstd_next_to_read_));
+        out_fill_ += output.pos;
       }
     }
   }
 
   std::optional<std::string_view> read(size_t const n) {
     while (out_.size() != n) {
-      read_to_out();
+      read_to_out(n);
     }
-    fill_ = n;
+    out_fill_ = n;
   }
 
-  std::vector<std::byte> out_;
-  std::unique_ptr<ZSTD_DStream, decltype(&ZSTD_freeDStream)> dstream_;
   mmap_reader reader_;
+  std::vector<std::byte> out_;
+  size_t out_fill_;
+  std::unique_ptr<ZSTD_DStream, decltype(&ZSTD_freeDStream)> dstream_;
+  size_t zstd_next_to_read_;
 };
 
 inline int parse_oct(std::string_view s) {
