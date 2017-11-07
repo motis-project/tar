@@ -171,8 +171,8 @@ struct tar_reader {
       verify(header.size() == 512, "invalid tar file (size < 512)");
       verify(check_checksum(header), "invalid checksum");
 
-      auto file_size = parse_oct(header.substr(124, 12));
-      auto bytes_to_read = next_multiple_512(file_size);
+      auto const file_size = parse_oct(header.substr(124, 12));
+      auto const bytes_to_read = next_multiple_512(file_size);
       if (is_file(header)) {
         auto const buf = reader_.read(file_size);
         verify(buf.value_or("").size() == file_size, "invalid file in tar");
