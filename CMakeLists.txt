@@ -39,7 +39,7 @@ endif()
 
 file(GLOB_RECURSE tar-test-files test/*.cc)
 add_executable(tar-test ${tar-test-files})
-target_link_libraries(tar-test zstd)
+target_link_libraries(tar-test libzstd_static)
 set_property(TARGET tar-test PROPERTY CXX_STANDARD 17)
 set_target_properties(tar-test PROPERTIES COMPILE_FLAGS "${tar-compile-flags}")
 
