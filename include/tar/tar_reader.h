@@ -7,11 +7,9 @@
 
 #include "zstd.h"
 
-#include "zstd-untar/util.h"
+#include "tar/util.h"
 
-namespace zstd_untar {
-
-namespace {
+namespace tar {namespace {
 
 inline int parse_oct(std::string_view s) {
   int i = 0;
@@ -103,4 +101,4 @@ struct tar_reader {
   Reader reader_;
 };
 
-}  // namespace zstd_untar
+}  // namespace tar

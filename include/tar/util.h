@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace zstd_untar {
+namespace tar {
 
 inline void verify(bool condition, char const* error = "verify failed") {
   if (!condition) {
@@ -10,4 +10,4 @@ inline void verify(bool condition, char const* error = "verify failed") {
   }
 }
 
-}  // namespace zstd_untar
+}  // namespace tar

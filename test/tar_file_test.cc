@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include "zstd-untar/tar_reader.h"
-#include "zstd-untar/file_reader.h"
+#include "tar/file_reader.h"
+#include "tar/tar_reader.h"
 
-using namespace zstd_untar;
+using namespace tar;
 
 TEST_CASE("untar") {
   tar_reader r{file_reader{"../resources/dir.tar"}};

@@ -8,7 +8,7 @@ include_directories(include)
 add_subdirectory(external_lib/zstd/build/cmake)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  set(zstd-untar "\
+  set(tar "\
     -fno-strict-aliasing \
     -Weverything \
     -Wno-c++98-compat \
@@ -25,27 +25,26 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     -Werror \
   ")
 elseif(NOT MSVC)
-  set(zstd-untar "\
+  set(tar "\
     -Wall \
     -Wextra \
     -Werror \
   ")
 else()
-  set(zstd-untar "\
+  set(tar "\
     /std:c++latest \
   ")
 endif()
 
-file(GLOB_RECURSE zstd-untar-test-files test/*.cc)
-add_executable(zstd-untar-test ${zstd-untar-test-files})
-target_link_libraries(zstd-untar-test zstd)
-set_property(TARGET zstd-untar-test PROPERTY CXX_STANDARD 17)
-set_target_properties(zstd-untar-test PROPERTIES COMPILE_FLAGS "${zstd-untar-compile-flags}")
+file(GLOB_RECURSE tar-test-files test/*.cc)
+add_executable(tar-test ${tar-test-files})
+target_link_libraries(tar-test zstd)
+set_property(TARGET tar-test PROPERTY CXX_STANDARD 17)
+set_target_properties(tar-test PROPERTIES COMPILE_FLAGS "${tar-compile-flags}")
 
-add_custom_target(format-check
+add_custom_target(tar-format-check
     find
         ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/test
       -type f
       -not -name "doctest.h"
@@ -73,4 +72,4 @@ add_custom_target(lint
   COMMENT "Running clang-tidy"
   VERBATIM
 )
-add_dependencies(lint zstd-untar-test)
+add_dependencies(lint tar-test)

@@ -1,9 +1,14 @@
 #pragma once
 
-#include "zstd-untar/mmap_reader.h"
-#include "zstd-untar/util.h"
+#include <memory>
+#include <optional>
+#include <string_view>
+#include <vector>
 
-namespace zstd_untar {
+#include "tar/mmap_reader.h"
+#include "tar/util.h"
+
+namespace tar {
 
 struct zstd_reader {
   explicit zstd_reader(char const* s)
@@ -74,4 +79,4 @@ struct zstd_reader {
   size_t next_to_read_;
 };
 
-}  // namespace zstd_untar
+}  // namespace tar

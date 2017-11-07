@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <utility>
 
-namespace zstd_untar {
+namespace tar {
 
 struct mmap_reader {
   struct file {
@@ -122,4 +122,4 @@ struct mmap_reader {
   char* it_;
 };
 
-}  // namespace zstd_untar
+}  // namespace tar
