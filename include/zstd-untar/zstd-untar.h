@@ -38,13 +38,12 @@ struct zstd_reader {
         out_fill_{0},
         prev_read_size_{0},
         dstream_{ZSTD_createDStream(), &ZSTD_freeDStream},
-        zstd_next_to_read_{dstream_ ? ZSTD_initDStream(dstream_.get()) : 0} {
+        next_to_read_{dstream_ ? ZSTD_initDStream(dstream_.get()) : 0} {
     verify(dstream_ != nullptr, "ZSTD_createDStream() error");
-    verify(!ZSTD_isError(zstd_next_to_read_), "ZSTD_initDStream() error");
+    verify(!ZSTD_isError(next_to_read_), "ZSTD_initDStream() error");
   }
 
   std::optional<std::string_view> read(size_t const n) {
-    printf("READ REQUEST: %zu\n", n);
     consume(n);
     read_to_out(n);
     return out_fill_ >= n ? std::make_optional(std::string_view{out_.data(), n})
@@ -53,45 +52,41 @@ struct zstd_reader {
 
   void read_to_out(size_t const min_size) {
     if (out_fill_ >= min_size) {
-      printf("- OUT STILL FILLED [fill=%zu >= n=%zu]\n", out_fill_, min_size);
       return;
-    } else {
-      printf("- NEW READ [fill=%zu < n=%zu]\n", out_fill_, min_size);
     }
 
     auto const out_buf_size =
         ZSTD_DStreamOutSize() *
         ((out_fill_ + 2 * ZSTD_DStreamOutSize() - 1) / ZSTD_DStreamOutSize());
     out_.resize(out_buf_size);
-    printf("- ALLOCATED %zu BYTES\n", out_buf_size);
 
-    for (auto[buf_in, num_bytes_read] = reader_.read(zstd_next_to_read_);
-         num_bytes_read != 0 && out_fill_ < min_size;
-         std::tie(buf_in, num_bytes_read) = reader_.read(zstd_next_to_read_)) {
-      printf("-- READ %zu BYTES TO %p [zstd_next_to_read_ was %zu]\n",
-             num_bytes_read, buf_in, zstd_next_to_read_);
+    while (true) {
+      if (out_fill_ >= min_size) {
+        break;
+      }
+
+      auto[buf_in, num_bytes_read] = reader_.read(next_to_read_);
+      if (num_bytes_read == 0) {
+        break;
+      }
+
       auto input = ZSTD_inBuffer{buf_in, num_bytes_read, 0};
-
       while (input.pos < input.size) {
         auto output =
-            ZSTD_outBuffer{out_.data() + out_fill_, out_.size() - out_fill_, 0};
-        zstd_next_to_read_ =
-            ZSTD_decompressStream(dstream_.get(), &output, &input);
-        verify(!ZSTD_isError(zstd_next_to_read_),
-               ZSTD_getErrorName(zstd_next_to_read_));
+            ZSTD_outBuffer{out_.data() + out_fill_, ZSTD_DStreamOutSize(), 0};
+        next_to_read_ = ZSTD_decompressStream(dstream_.get(), &output, &input);
+        verify(!ZSTD_isError(next_to_read_), ZSTD_getErrorName(next_to_read_));
         out_fill_ += output.pos;
       }
     }
   }
 
   void skip(size_t const n) {
-    printf("SKIP %zu BYTES\n", n);
     consume(n);
     read_to_out(n);
   }
 
   void consume(size_t const next_read_size) {
-    printf("- CONSUMING %zu BYTES\n", prev_read_size_);
     out_.erase(begin(out_), std::next(begin(out_), prev_read_size_));
     out_fill_ -= prev_read_size_;
     prev_read_size_ = next_read_size;
@@ -102,7 +97,7 @@ struct zstd_reader {
   size_t out_fill_;
   size_t prev_read_size_;
   std::unique_ptr<ZSTD_DStream, decltype(&ZSTD_freeDStream)> dstream_;
-  size_t zstd_next_to_read_;
+  size_t next_to_read_;
 };
 
 inline int parse_oct(std::string_view s) {

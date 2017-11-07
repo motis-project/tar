@@ -6,19 +6,25 @@
 
 using namespace zstd_untar;
 
-TEST_CASE("dupsort") {
-  //auto r = file_reader{"../dir.tar"};
+TEST_CASE("untar") {
 
-  tar_reader r{zstd_reader{"20170101.tar.zst"}};
-  for (auto f = r.read(); f; f = r.read()) {
-    std::cout << "file: " << *f << "\n";
+  SUBCASE(".tar file") {
+    tar_reader r{file_reader{"../dir.tar"}};
+    std::optional<std::string_view> s;
+    std::string content;
+    while ((s = r.read())) {
+      content += *s;
+    }
+    CHECK(content == "hello\nworld\n");
   }
 
-  // auto f = read_file(r);
-  // CHECK(f);
-  // CHECK(*f == "hello\n");
-  //
-  // f = read_file(r);
-  // CHECK(f);
-  // CHECK(*f == "world\n");
+  SUBCASE(".tar.zst file") {
+    tar_reader r{zstd_reader{"../dir.tar.zst"}};
+    std::optional<std::string_view> s;
+    std::string content;
+    while ((s = r.read())) {
+      content += *s;
+    }
+    CHECK(content == "hello\nworld\n");
+  }
 }
