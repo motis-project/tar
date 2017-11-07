@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "zstd-untar/zstd-untar.h"
+#include "zstd-untar/tar_reader.h"
 #include "zstd-untar/file_reader.h"
 
 using namespace zstd_untar;
