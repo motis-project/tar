@@ -62,14 +62,13 @@ add_custom_target(tar-format-check
   VERBATIM
 )
 
-add_custom_target(lint
+add_custom_target(tar-lint
   /usr/bin/python
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/run-clang-tidy.py
       -exit-on-error
       -header-filter "^${CMAKE_CURRENT_SOURCE_DIR}/include"
-      "^${CMAKE_CURRENT_SOURCE_DIR}/src/"
-      "^${CMAKE_CURRENT_SOURCE_DIR}/test/"
+      "^${CMAKE_CURRENT_SOURCE_DIR}/test"
   COMMENT "Running clang-tidy"
   VERBATIM
 )
-add_dependencies(lint tar-test)
+add_dependencies(tar-lint tar-test)

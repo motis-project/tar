@@ -9,7 +9,7 @@
 
 #include "tar/util.h"
 
-namespace tar {namespace {
+namespace tar {
 
 inline int parse_oct(std::string_view s) {
   int i = 0;
@@ -61,8 +61,6 @@ inline int next_multiple_512(int n) {
   a = a + 1;
   return a << 9;
 }
-
-}  // namespace
 
 template <typename Reader>
 struct tar_reader {
