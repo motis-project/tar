@@ -36,14 +36,9 @@ else()
   ")
 endif()
 
-file(GLOB_RECURSE zstd-untar-files src/*.cc)
-add_library(zstd-untar STATIC "${zstd-untar-files}")
-set_property(TARGET zstd-untar PROPERTY CXX_STANDARD 17)
-target_link_libraries(zstd-untar zstd)
-
 file(GLOB_RECURSE zstd-untar-test-files test/*.cc)
 add_executable(zstd-untar-test ${zstd-untar-test-files})
-target_link_libraries(zstd-untar-test zstd-untar)
+target_link_libraries(zstd-untar-test zstd)
 set_property(TARGET zstd-untar-test PROPERTY CXX_STANDARD 17)
 set_target_properties(zstd-untar-test PROPERTIES COMPILE_FLAGS "${zstd-untar-compile-flags}")
 
@@ -78,4 +73,4 @@ add_custom_target(lint
   COMMENT "Running clang-tidy"
   VERBATIM
 )
-add_dependencies(lint zstd-untar zstd-untar-test)
+add_dependencies(lint zstd-untar-test)
