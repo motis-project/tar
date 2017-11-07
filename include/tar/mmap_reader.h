@@ -98,17 +98,6 @@ struct mmap_reader {
 
   mmap_reader(char const* filename) : m_(filename), it_(m_.ptr()) {}
 
-  std::pair<char*, size_t> read() {
-    auto const start = it_;
-    auto const last = m_.ptr() + m_.size();
-    auto const num = last - it_;
-    auto const nl = static_cast<char*>(memchr(it_, '\n', num));
-    auto const length = nl != nullptr ? nl - start : last - it_;
-    it_ = nl;
-    ++it_;
-    return {start, length};
-  }
-
   std::pair<char*, size_t> read(size_t const num_bytes) {
     auto const start = it_;
     auto const last = m_.ptr() + m_.size();
