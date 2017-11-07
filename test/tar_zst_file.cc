@@ -8,7 +8,7 @@
 using namespace zstd_untar;
 
 TEST_CASE("untar") {
-  tar_reader r{zstd_reader{"../dir.tar.zst"}};
+  tar_reader r{zstd_reader{"../resources/dir.tar.zst"}};
   std::optional<std::string_view> s;
   std::string content;
   while ((s = r.read())) {
