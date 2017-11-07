@@ -7,15 +7,18 @@
 using namespace zstd_untar;
 
 TEST_CASE("dupsort") {
-  printf("%zu\n", ZSTD_DStreamOutSize());
+  //auto r = file_reader{"../dir.tar"};
 
-  auto r = file_reader{"../dir.tar"};
+  tar_reader r{zstd_reader{"20170101.tar.zst"}};
+  for (auto f = r.read(); f; f = r.read()) {
+    std::cout << "file: " << *f << "\n";
+  }
 
-  auto f = read_file(r);
-  CHECK(f);
-  CHECK(*f == "hello\n");
-
-  f = read_file(r);
-  CHECK(f);
-  CHECK(*f == "world\n");
+  // auto f = read_file(r);
+  // CHECK(f);
+  // CHECK(*f == "hello\n");
+  //
+  // f = read_file(r);
+  // CHECK(f);
+  // CHECK(*f == "world\n");
 }
