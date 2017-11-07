@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.9)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(include)
+include_directories(external_lib/zstd/lib)
 
 add_subdirectory(external_lib/zstd/build/cmake)
 
