@@ -2,6 +2,7 @@ gcc-7-release:
   tags:
     - artful
   script:
+    - git submodule update --init --recursive
     - export CXX=g++-7
     - export CC=gcc-7
     - mkdir -p build-gcc-7-release
@@ -14,6 +15,7 @@ clang-5-debug-asan:
   tags:
     - artful
   script:
+    - git submodule update --init --recursive
     - export CXX=clang++
     - export CC=clang
     - export CXXFLAGS="-stdlib=libc++ -fsanitize=address -fno-omit-frame-pointer"
@@ -27,6 +29,7 @@ gcc-7-valgrind:
   tags:
     - artful
   script:
+    - git submodule update --init --recursive
     - export CXX=g++-7
     - export CC=gcc-7
     - mkdir -p gcc-7-valgrind
@@ -39,6 +42,7 @@ clang-format:
   tags:
     - artful
   script:
+    - git submodule update --init --recursive
     - mkdir build-clang-format
     - cd build-clang-format
     - cmake ..
@@ -48,6 +52,7 @@ clang-tidy:
   tags:
     - artful
   script:
+    - git submodule update --init --recursive
     - export CXX=clang++
     - export CC=clang
     - export CXXFLAGS="-stdlib=libc++"
