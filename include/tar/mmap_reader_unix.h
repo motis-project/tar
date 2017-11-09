@@ -50,7 +50,7 @@ struct mmap_reader {
       } else {
         struct stat sb {};
         fstat(fd, &sb);
-        return sb.st_size;
+        return static_cast<size_t>(sb.st_size);
       }
     }
 

@@ -11,8 +11,8 @@
 
 namespace tar {
 
-inline int parse_oct(std::string_view s) {
-  int i = 0;
+inline unsigned parse_oct(std::string_view s) {
+  unsigned i = 0;
 
   auto p = begin(s);
   auto n = s.size();
@@ -23,7 +23,7 @@ inline int parse_oct(std::string_view s) {
 
   while (*p >= '0' && *p <= '7' && n > 0) {
     i *= 8;
-    i += *p - '0';
+    i += static_cast<unsigned>(*p - '0');
     ++p;
     --n;
   }
@@ -38,8 +38,8 @@ inline bool is_end_of_archive(std::string_view header) {
 }
 
 inline bool check_checksum(std::string_view p) {
-  auto u = 0;
-  for (auto n = 0; n < 512; ++n) {
+  auto u = 0u;
+  for (auto n = 0u; n < 512; ++n) {
     if (n < 148 || n > 155) {
       u += static_cast<unsigned char>(p[n]);
     } else {
@@ -54,12 +54,16 @@ inline bool is_file(std::string_view buf) {
   return file_type == 0 || file_type == '0';
 }
 
-inline int next_multiple_512(int n) {
-  int a;
-  a = n - 1;
-  a = a >> 9;
-  a = a + 1;
-  return a << 9;
+inline unsigned next_multiple_512(unsigned n) {
+  if (n == 0) {
+    return 0;
+  } else {
+    unsigned a;
+    a = n - 1;
+    a = a >> 9;
+    a = a + 1;
+    return a << 9;
+  }
 }
 
 template <typename Reader>
@@ -95,8 +99,8 @@ struct tar_reader {
     }
   }
 
-  size_t next_skip_;
   Reader reader_;
+  size_t next_skip_;
 };
 
 }  // namespace tar

@@ -9,7 +9,7 @@ include_directories(external_lib/zstd/lib)
 add_subdirectory(external_lib/zstd/build/cmake)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  set(tar "\
+  set(tar-compile-flags "\
     -fno-strict-aliasing \
     -Weverything \
     -Wno-c++98-compat \
@@ -26,13 +26,13 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     -Werror \
   ")
 elseif(NOT MSVC)
-  set(tar "\
+  set(tar-compile-flags "\
     -Wall \
     -Wextra \
     -Werror \
   ")
 else()
-  set(tar "\
+  set(tar-compile-flags "\
     /std:c++latest \
   ")
 endif()
