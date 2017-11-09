@@ -38,6 +38,32 @@ gcc-7-valgrind:
     - make -j12 tar-test
     - valgrind --leak-check=full --show-reachable=yes ./tar-test
 
+msvc-release:
+  tags:
+    - windows
+  script:
+    - set WD=%cd%
+    - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+    - cd %WD%
+    - mkdir build-msvc-release
+    - cd build-msvc-release
+    - cmake -G "NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Release ..
+    - jom tar-test
+    - tar-test
+
+msvc-debug:
+  tags:
+    - windows
+  script:
+    - set WD=%cd%
+    - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+    - cd %WD%
+    - mkdir build-msvc-debug
+    - cd build-msvc-debug
+    - cmake -G "NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Debug ..
+    - jom tar-test
+    - tar-test
+
 clang-format:
   tags:
     - artful
