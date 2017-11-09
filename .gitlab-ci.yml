@@ -42,6 +42,7 @@ msvc-release:
   tags:
     - windows
   script:
+    - git submodule update --init --recursive
     - set WD=%cd%
     - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
     - cd %WD%
@@ -55,6 +56,7 @@ msvc-debug:
   tags:
     - windows
   script:
+    - git submodule update --init --recursive
     - set WD=%cd%
     - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
     - cd %WD%
