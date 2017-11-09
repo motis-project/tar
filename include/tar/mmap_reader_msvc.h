@@ -57,8 +57,7 @@ struct mmap_reader {
 
   struct memory_map {
     explicit memory_map(char const* path)
-        : f_{path},
-          fmap_{static_cast<char*>(mmap(f_.f_, f_.size_))} {
+        : f_{path}, fmap_{static_cast<char*>(mmap(f_.f_, f_.size_))} {
       if (fmap_ == nullptr) {  // NOLINT
         throw std::runtime_error("cannot memory map file");
       }
@@ -88,16 +87,17 @@ struct mmap_reader {
     static void* mmap(HANDLE f, size_t const size) {
       DWORD size_l = static_cast<DWORD>(size);
       DWORD size_h = size >> 32u;
-      auto const fm = CreateFileMapping(f, nullptr, PAGE_READONLY, size_h, size_l, 0);
-	  if (fm == nullptr) {
-		  throw std::runtime_error("CreateFileMapping failed");
-	  }
-	  auto const map = MapViewOfFile(fm, FILE_MAP_READ, 0, 0, size);
-	  CloseHandle(fm);
-	  if (map == nullptr) {
-		  throw std::runtime_error("MapViewOfFile failed");
-	  }
-	  return map;
+      auto const fm =
+          CreateFileMapping(f, nullptr, PAGE_READONLY, size_h, size_l, 0);
+      if (fm == nullptr) {
+        throw std::runtime_error("CreateFileMapping failed");
+      }
+      auto const map = MapViewOfFile(fm, FILE_MAP_READ, 0, 0, size);
+      CloseHandle(fm);
+      if (map == nullptr) {
+        throw std::runtime_error("MapViewOfFile failed");
+      }
+      return map;
     }
 
     size_t size() const { return f_.size_; }

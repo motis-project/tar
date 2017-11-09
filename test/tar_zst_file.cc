@@ -1,5 +1,7 @@
 #include "doctest.h"
 
+#include <iostream>
+
 #include "tar/tar_reader.h"
 #include "tar/zstd_reader.h"
 
