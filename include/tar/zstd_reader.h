@@ -67,7 +67,7 @@ struct zstd_reader {
 
   void consume(size_t const next_read_size) {
     out_.erase(begin(out_),
-               std::next(begin(out_), static_cast<ssize_t>(prev_read_size_)));
+               std::next(begin(out_), static_cast<long>(prev_read_size_)));
     out_fill_ -= prev_read_size_;
     prev_read_size_ = next_read_size;
   }
