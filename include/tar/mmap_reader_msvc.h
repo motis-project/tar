@@ -1,16 +1,18 @@
 #pragma once
 
 #define NOMINMAX
-#define WIN32_LEAN_AND_MEAN
+//#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
+#include <algorithm>
 
 namespace tar {
 
 struct mmap_reader {
   struct file {
     explicit file(char const* path)
-        : f_{CreateFileA(path, GENERIC_READ, 0, nullptr, OPEN_EXISTING,
-                         FILE_ATTRIBUTE_NORMAL, nullptr)},
+        : f_{CreateFile(path, GENERIC_READ, 0, nullptr, OPEN_EXISTING,
+                        FILE_ATTRIBUTE_NORMAL, nullptr)},
           size_{get_size(f_)} {
       if (f_ == INVALID_HANDLE_VALUE) {
         throw std::runtime_error("cannot open file");
@@ -56,9 +58,8 @@ struct mmap_reader {
   struct memory_map {
     explicit memory_map(char const* path)
         : f_{path},
-          fmap_{static_cast<char*>(
-              mmap(nullptr, f_.size_, PROT_READ, MAP_PRIVATE, f_.f_, 0))} {
-      if (fmap_ == MAP_FAILED) {  // NOLINT
+          fmap_{static_cast<char*>(mmap(f_.f_, f_.size_))} {
+      if (fmap_ == nullptr) {  // NOLINT
         throw std::runtime_error("cannot memory map file");
       }
     }
@@ -79,16 +80,24 @@ struct mmap_reader {
     memory_map& operator=(memory_map const&) = delete;
 
     ~memory_map() {
-      if (fmap_ != nullptr && fmap_ != MAP_FAILED) {  // NOLINT
-        munmap(fmap_, f_.size_);
+      if (fmap_ != nullptr) {  // NOLINT
+        UnmapViewOfFile(fmap_);
       }
     }
 
-    static void* mmap(HANDLE* f) {
-      auto const size = size();
-      DWORD size_l = size;
+    static void* mmap(HANDLE f, size_t const size) {
+      DWORD size_l = static_cast<DWORD>(size);
       DWORD size_h = size >> 32u;
-      return CreateFileMapping(f, nullptr, PAGE_READONLY, size_h, size_l, 0);
+      auto const fm = CreateFileMapping(f, nullptr, PAGE_READONLY, size_h, size_l, 0);
+	  if (fm == nullptr) {
+		  throw std::runtime_error("CreateFileMapping failed");
+	  }
+	  auto const map = MapViewOfFile(fm, FILE_MAP_READ, 0, 0, size);
+	  CloseHandle(fm);
+	  if (map == nullptr) {
+		  throw std::runtime_error("MapViewOfFile failed");
+	  }
+	  return map;
     }
 
     size_t size() const { return f_.size_; }

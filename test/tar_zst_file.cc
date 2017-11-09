@@ -1,14 +1,12 @@
 #include "doctest.h"
 
-#include <iostream>
-
 #include "tar/tar_reader.h"
 #include "tar/zstd_reader.h"
 
 using namespace tar;
 
 TEST_CASE("untar") {
-  tar_reader r{zstd_reader{"../resources/dir.tar.zst"}};
+  tar_reader<zstd_reader> r{zstd_reader{"../resources/dir.tar.zst"}};
   std::optional<std::string_view> s;
   std::string content;
   while ((s = r.read())) {
