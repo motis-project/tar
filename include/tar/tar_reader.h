@@ -99,9 +99,7 @@ struct tar_reader {
     }
   }
 
-  float progress() const {
-    return reader_.progress();
-  }
+  float progress() const { return reader_.progress(); }
 
   Reader reader_;
   size_t next_skip_;

@@ -52,8 +52,8 @@ struct zstd_reader {
 
       auto input = ZSTD_inBuffer{buf_in, num_bytes_read, 0};
       while (input.pos < input.size) {
-        auto output =
-            ZSTD_outBuffer{out_.data() + out_fill_, out_buf_size - out_fill_, 0};
+        auto output = ZSTD_outBuffer{out_.data() + out_fill_,
+                                     out_buf_size - out_fill_, 0};
         next_to_read_ = ZSTD_decompressStream(dstream_.get(), &output, &input);
         verify(!ZSTD_isError(next_to_read_), ZSTD_getErrorName(next_to_read_));
         out_fill_ += output.pos;
@@ -73,9 +73,7 @@ struct zstd_reader {
     prev_read_size_ = next_read_size;
   }
 
-  float progress() const {
-    return reader_.progress();
-  }
+  float progress() const { return reader_.progress(); }
 
   mmap_reader reader_;
   std::vector<char> out_;
