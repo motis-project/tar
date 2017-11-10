@@ -48,8 +48,8 @@ struct zstd_reader {
       auto input = ZSTD_inBuffer{buf_in, num_bytes_read, 0};
       while (input.pos < input.size) {
         resize_buffer();
-        auto output = ZSTD_outBuffer{out_.data() + out_fill_,
-                                     ZSTD_DStreamOutSize(), 0};
+        auto output =
+            ZSTD_outBuffer{out_.data() + out_fill_, ZSTD_DStreamOutSize(), 0};
         next_to_read_ = ZSTD_decompressStream(dstream_.get(), &output, &input);
         verify(!ZSTD_isError(next_to_read_), ZSTD_getErrorName(next_to_read_));
         out_fill_ += output.pos;
@@ -59,7 +59,8 @@ struct zstd_reader {
 
   void resize_buffer() {
     if (out_.size() - out_fill_ < ZSTD_DStreamOutSize()) {
-      auto const multiple = (out_fill_ + 2 * ZSTD_DStreamOutSize()) / ZSTD_DStreamOutSize();
+      auto const multiple =
+          (out_fill_ + 2 * ZSTD_DStreamOutSize()) / ZSTD_DStreamOutSize();
       out_.resize(multiple * ZSTD_DStreamOutSize());
     }
   }
