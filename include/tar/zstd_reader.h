@@ -35,11 +35,6 @@ struct zstd_reader {
       return;
     }
 
-    auto const out_buf_size =
-        ZSTD_DStreamOutSize() *
-        ((out_fill_ + 2 * ZSTD_DStreamOutSize()) / ZSTD_DStreamOutSize());
-    out_.resize(out_buf_size);
-
     while (true) {
       if (out_fill_ >= min_size) {
         break;
@@ -52,12 +47,20 @@ struct zstd_reader {
 
       auto input = ZSTD_inBuffer{buf_in, num_bytes_read, 0};
       while (input.pos < input.size) {
+        resize_buffer();
         auto output = ZSTD_outBuffer{out_.data() + out_fill_,
-                                     out_buf_size - out_fill_, 0};
+                                     ZSTD_DStreamOutSize(), 0};
         next_to_read_ = ZSTD_decompressStream(dstream_.get(), &output, &input);
         verify(!ZSTD_isError(next_to_read_), ZSTD_getErrorName(next_to_read_));
         out_fill_ += output.pos;
       }
+    }
+  }
+
+  void resize_buffer() {
+    if (out_.size() - out_fill_ < ZSTD_DStreamOutSize()) {
+      auto const multiple = (out_fill_ + 2 * ZSTD_DStreamOutSize()) / ZSTD_DStreamOutSize();
+      out_.resize(multiple * ZSTD_DStreamOutSize());
     }
   }
 
