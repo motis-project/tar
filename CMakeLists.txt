@@ -3,10 +3,7 @@ cmake_minimum_required(VERSION 3.9)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include_directories(include)
-include_directories(SYSTEM external_lib/zstd/lib)
-
-add_subdirectory(external_lib/zstd/build/cmake)
+add_subdirectory(external_lib/zstd)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(tar-compile-flags "\
@@ -39,7 +36,7 @@ endif()
 
 file(GLOB_RECURSE tar-test-files test/*.cc)
 add_executable(tar-test ${tar-test-files})
-target_link_libraries(tar-test libzstd_static)
+target_link_libraries(tar-test zstd)
 set_property(TARGET tar-test PROPERTY CXX_STANDARD 17)
 set_target_properties(tar-test PROPERTIES COMPILE_FLAGS "${tar-compile-flags}")
 
