@@ -107,6 +107,10 @@ struct mmap_reader {
     return {start, bytes_read};
   }
 
+  float progress() const {
+    return (it_ - m_.ptr()) / static_cast<float>(m_.size());
+  }
+
   memory_map m_;
   char* it_;
 };

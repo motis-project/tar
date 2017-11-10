@@ -18,6 +18,10 @@ struct file_reader {
 
   void skip(size_t const s) { reader_.read(s); }
 
+  float progress() const {
+    return reader_.progress();
+  }
+
   mmap_reader reader_;
 };
 
