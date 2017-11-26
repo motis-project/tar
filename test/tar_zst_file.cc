@@ -7,7 +7,7 @@
 
 using namespace tar;
 
-TEST_CASE("untar") {
+TEST_CASE("untar zst") {
   tar_reader<zstd_reader> r{zstd_reader{"../resources/dir.tar.zst"}};
   std::optional<std::string_view> s;
   std::string content;

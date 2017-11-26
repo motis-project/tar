@@ -10,6 +10,8 @@ namespace tar {
 struct file_reader {
   explicit file_reader(char const* s) : reader_{s} {}
 
+  std::optional<std::string_view> read() { return read(reader_.m_.size()); }
+
   std::optional<std::string_view> read(size_t const s) {
     auto[ptr, size] = reader_.read(s);
     return size == 0 ? std::nullopt
