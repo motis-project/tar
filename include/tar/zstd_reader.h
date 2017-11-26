@@ -6,6 +6,8 @@
 #include <string_view>
 #include <vector>
 
+#include "zstd.h"
+
 #include "tar/mmap_reader.h"
 #include "tar/util.h"
 

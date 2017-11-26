@@ -36,10 +36,11 @@ endif()
 
 add_library(tar INTERFACE)
 target_include_directories(tar INTERFACE include)
+target_link_libraries(tar INTERFACE zstd)
 
 file(GLOB_RECURSE tar-test-files test/*.cc)
 add_executable(tar-test EXCLUDE_FROM_ALL ${tar-test-files})
-target_link_libraries(tar-test zstd tar)
+target_link_libraries(tar-test tar)
 set_property(TARGET tar-test PROPERTY CXX_STANDARD 17)
 set_target_properties(tar-test PROPERTIES COMPILE_FLAGS "${tar-compile-flags}")
 

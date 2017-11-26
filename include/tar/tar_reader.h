@@ -5,8 +5,6 @@
 #include <string_view>
 #include <vector>
 
-#include "zstd.h"
-
 #include "tar/util.h"
 
 namespace tar {
