@@ -9,6 +9,6 @@ using namespace tar;
 TEST_CASE("read file") {
   file_reader r{"../resources/test.txt"};
   auto content = r.read();
-  CHECK(content == "hello\nworld\n");
+  CHECK(content == "hello\nworld");
   CHECK(!r.read());
 }
