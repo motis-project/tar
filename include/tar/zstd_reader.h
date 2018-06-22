@@ -18,7 +18,7 @@ struct zstd_reader {
 
   explicit zstd_reader(char const* s)
       : reader_{s},
-        out_(ZSTD_DStreamOutSize()),
+        out_(2 * ZSTD_DStreamOutSize() + MAX_CONSUMED_BUFFER),
         out_fill_{0},
         prev_read_size_{0},
         dstream_{ZSTD_createDStream(), &ZSTD_freeDStream},
@@ -64,10 +64,7 @@ struct zstd_reader {
       return;
     }
 
-    auto const multiple = ((offset_ + out_fill_ + 2 * ZSTD_DStreamOutSize()) /
-                           ZSTD_DStreamOutSize()) *
-                          ZSTD_DStreamOutSize();
-    out_.resize(multiple);
+    out_.resize(offset_ + out_fill_ + 2 * ZSTD_DStreamOutSize());
   }
 
   void skip(size_t const n) {
