@@ -1,38 +1,13 @@
 project(tar)
 cmake_minimum_required(VERSION 3.9)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-add_subdirectory(external_lib/zstd)
-
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  set(tar-compile-flags "\
-    -fno-strict-aliasing \
-    -Weverything \
-    -Wno-c++98-compat \
-    -Wno-c++98-compat-pedantic \
-    -Wno-newline-eof \
-    -Wno-missing-prototypes \
-    -Wno-padded \
-    -Wno-double-promotion \
-    -Wno-undef \
-    -Wno-undefined-reinterpret-cast \
-    -Wno-float-conversion \
-    -Wno-global-constructors \
-    -Wno-exit-time-destructors \
-    -Werror \
-  ")
-elseif(NOT MSVC)
-  set(tar-compile-flags "\
-    -Wall \
-    -Wextra \
-    -Werror \
-  ")
-else()
-  set(tar-compile-flags "\
-    /std:c++latest \
-  ")
+option(TAR_LINT "Run clang-tidy with the compiler." OFF)
+if(TAR_LINT)
+  include(cmake/clang-tidy.cmake)
 endif()
+
+include(cmake/pkg.cmake)
+add_subdirectory(doctest)
 
 add_library(tar INTERFACE)
 target_include_directories(tar INTERFACE include)
@@ -40,37 +15,29 @@ target_link_libraries(tar INTERFACE zstd)
 
 file(GLOB_RECURSE tar-test-files test/*.cc)
 add_executable(tar-test EXCLUDE_FROM_ALL ${tar-test-files})
-target_link_libraries(tar-test tar)
+target_link_libraries(tar-test tar doctest)
 set_property(TARGET tar-test PROPERTY CXX_STANDARD 17)
-set_target_properties(tar-test PROPERTIES COMPILE_FLAGS "${tar-compile-flags}")
-
-add_custom_target(tar-format-check
-    find
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/test
-      -type f
-      -not -name "doctest.h"
-      -a
-      \(
-      -name "*.cc"
-      -o -name "*.h"
-      \)
-      -print0
-    | xargs -0 clang-format-5.0 -i
-  COMMAND
-    git status --porcelain | xargs -I {} -0 test -z \"{}\"
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  COMMENT "Checking source code formatting"
-  VERBATIM
-)
-
-add_custom_target(tar-lint
-  /usr/bin/python
-    ${CMAKE_CURRENT_SOURCE_DIR}/tools/run-clang-tidy.py
-      -exit-on-error
-      -header-filter "^${CMAKE_CURRENT_SOURCE_DIR}/include"
-      "^${CMAKE_CURRENT_SOURCE_DIR}/test"
-  COMMENT "Running clang-tidy"
-  VERBATIM
-)
-add_dependencies(tar-lint tar-test)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  target_compile_options(tar-test PRIVATE
+    -fno-strict-aliasing
+    -Weverything
+    -Wno-c++98-compat
+    -Wno-c++98-compat-pedantic
+    -Wno-newline-eof
+    -Wno-missing-prototypes
+    -Wno-padded
+    -Wno-double-promotion
+    -Wno-undef
+    -Wno-undefined-reinterpret-cast
+    -Wno-float-conversion
+    -Wno-global-constructors
+    -Wno-exit-time-destructors
+    -Werror
+  )
+elseif(NOT MSVC)
+  target_compile_options(tar-test PRIVATE
+    -Wall
+    -Wextra
+    -Werror
+  )
+endif()

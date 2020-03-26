@@ -42,7 +42,7 @@ struct zstd_reader {
         break;
       }
 
-      auto[buf_in, num_bytes_read] = reader_.read(next_to_read_);
+      auto [buf_in, num_bytes_read] = reader_.read(next_to_read_);
       if (num_bytes_read == 0) {
         break;
       }

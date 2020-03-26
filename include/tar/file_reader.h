@@ -13,7 +13,7 @@ struct file_reader {
   std::optional<std::string_view> read() { return read(reader_.m_.size()); }
 
   std::optional<std::string_view> read(size_t const s) {
-    auto[ptr, size] = reader_.read(s);
+    auto [ptr, size] = reader_.read(s);
     return size == 0 ? std::nullopt
                      : std::make_optional(std::string_view{ptr, size});
   }
