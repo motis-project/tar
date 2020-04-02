@@ -7,7 +7,6 @@ if(TAR_LINT)
 endif()
 
 include(cmake/pkg.cmake)
-add_subdirectory(doctest)
 
 add_library(tar INTERFACE)
 target_include_directories(tar INTERFACE include)
