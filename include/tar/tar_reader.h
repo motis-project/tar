@@ -86,6 +86,8 @@ struct tar_reader {
 
       auto const file_size = parse_oct(header.substr(124, 12));
       auto const bytes_to_read = next_multiple_512(file_size);
+      current_file_name_ = header.substr(
+          0, std::min(header.find('\0'), static_cast<std::size_t>(100ULL)));
       if (is_file(header)) {
         auto const buf = reader_.read(file_size);
         verify(buf.value_or("").size() == file_size, "invalid file in tar");
@@ -99,8 +101,11 @@ struct tar_reader {
 
   float progress() const { return reader_.progress(); }
 
+  std::string_view current_file_name() const { return current_file_name_; }
+
   Reader reader_;
   size_t next_skip_;
+  std::string_view current_file_name_;
 };
 
 }  // namespace tar
