@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <string>
 #include <string_view>
 
 #include "tar/mmap_reader.h"
@@ -8,7 +9,7 @@
 namespace tar {
 
 struct file_reader {
-  explicit file_reader(char const* s) : reader_{s} {}
+  explicit file_reader(char const* s) : file_name_{s}, reader_{s} {}
 
   std::optional<std::string_view> read() { return read(reader_.m_.size()); }
 
@@ -22,6 +23,9 @@ struct file_reader {
 
   float progress() const { return reader_.progress(); }
 
+  std::string_view current_file_name() const { return file_name_; }
+
+  std::string file_name_;
   mmap_reader reader_;
 };
 
