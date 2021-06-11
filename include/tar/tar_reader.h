@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <optional>
+#include <string>
 #include <string_view>
 #include <vector>
 
@@ -105,7 +106,7 @@ struct tar_reader {
 
   Reader reader_;
   size_t next_skip_;
-  std::string_view current_file_name_;
+  std::string current_file_name_;
 };
 
 }  // namespace tar
