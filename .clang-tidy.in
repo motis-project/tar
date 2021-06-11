@@ -1,5 +1,70 @@
-Checks:            '*,-cert-err60-cpp,-clang-analyzer-core.NonNullParamChecker,-misc-unused-parameters,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-type-union-access,-readability-simplify-boolean-expr,-clang-analyzer-alpha*,-google-build-using-namespace,-clang-analyzer-optin.osx*,-clang-analyzer-osx*,-readability-implicit-bool-cast,-readability-else-after-return,-llvm-include-order,-clang-analyzer-alpha.unix.PthreadLock,-llvm-header-guard,-readability-named-parameter,-clang-analyzer-alpha.deadcode.UnreachableCode,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-type-vararg,-misc-move-const-arg,-cert-err58-cpp,-misc-macro-parentheses,-google-runtime-references,-clang-analyzer-deadcode.DeadStores'
-HeaderFilterRegex: ''
+Checks: "*,\
+-llvmlibc-*,\
+-abseil-*,\
+-llvm-else-after-return,\
+-hicpp-named-parameter,\
+-cert-err60-cpp,\
+-clang-analyzer-core.NonNullParamChecker,\
+-misc-unused-parameters,\
+-cppcoreguidelines-pro-bounds-array-to-pointer-decay,\
+-cppcoreguidelines-pro-bounds-pointer-arithmetic,\
+-cppcoreguidelines-pro-type-union-access,\
+-readability-simplify-boolean-expr,\
+-clang-analyzer-alpha*,\
+-google-build-using-namespace,\
+-clang-analyzer-optin.osx*,\
+-clang-analyzer-osx*,\
+-readability-implicit-bool-cast,\
+-readability-else-after-return,\
+-llvm-include-order,\
+-clang-analyzer-alpha.unix.PthreadLock,\
+-llvm-header-guard,\
+-readability-named-parameter,\
+-clang-analyzer-alpha.deadcode.UnreachableCode,\
+-cppcoreguidelines-pro-type-reinterpret-cast,\
+-cppcoreguidelines-pro-type-vararg,\
+-misc-move-const-arg,\
+-google-runtime-references,\
+-cert-err58-cpp,\
+-modernize-use-default-member-init,\
+-fuchsia-overloaded-operator,\
+-fuchsia-default-arguments,\
+-hicpp-vararg,\
+-clang-analyzer-optin.cplusplus.VirtualCall,\
+-cppcoreguidelines-owning-memory,\
+-hicpp-no-array-decay,\
+-*-magic-numbers,\
+-*-non-private-member-variables-in-classes,\
+-fuchsia-statically-constructed-objects,\
+-readability-isolate-declaration,\
+-fuchsia-multiple-inheritance,\
+-fuchsia-trailing-return,\
+-portability-simd-intrinsics,\
+-modernize-use-nodiscard,\
+-cppcoreguidelines-pro-bounds-constant-array-index,\
+-*-avoid-c-arrays,\
+-*-narrowing-conversions,\
+-*-avoid-goto,\
+-hicpp-multiway-paths-covered,\
+-clang-analyzer-cplusplus.NewDeleteLeaks,\
+-clang-analyzer-cplusplus.NewDelete,\
+-hicpp-signed-bitwise,\
+-cert-msc32-c,\
+-cert-msc51-cpp,\
+-bugprone-exception-escape,\
+-cppcoreguidelines-macro-usage,\
+-cert-dcl21-cpp,\
+-modernize-use-trailing-return-type,\
+-fuchsia-default-arguments-calls,\
+-fuchsia-default-arguments-declarations,\
+-misc-no-recursion,\
+-llvmlibc-callee-namespace,\
+-llvm-else-after-return,\
+-llvm-qualified-auto,\
+-readability-qualified-auto,\
+-google-readability-avoid-underscore-in-googletest-name"
+WarningsAsErrors: '*'
+HeaderFilterRegex: '^${RELATIVE_SOURCE_DIR}include/'
 AnalyzeTemporaryDtors: false
 User:            root
 CheckOptions:
@@ -232,7 +297,7 @@ CheckOptions:
   - key:             readability-identifier-naming.ProtectedMemberPrefix
     value:           ''
   - key:             readability-identifier-naming.ProtectedMemberSuffix
-    value:           ''
+    value:           '_'
   - key:             readability-identifier-naming.ProtectedMethodCase
     value:           lower_case
   - key:             readability-identifier-naming.ProtectedMethodPrefix
