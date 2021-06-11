@@ -11,6 +11,7 @@ jobs:
     runs-on: windows-latest
 
     strategy:
+      fail-fast: false
       matrix:
         mode: [Debug, Release]
 
@@ -30,4 +31,4 @@ jobs:
     - name: Run tests
       run: |
         cd build
-        ${{ matrix.mode }}\tar-test.exe
+        .\tar-test.exe
