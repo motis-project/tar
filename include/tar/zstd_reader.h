@@ -25,7 +25,7 @@ struct zstd_reader {
         next_to_read_{dstream_ ? ZSTD_initDStream(dstream_.get()) : 0},
         offset_{0} {
     verify(dstream_ != nullptr, "ZSTD_createDStream() error");
-    verify(!ZSTD_isError(next_to_read_), "ZSTD_initDStream() error");
+    verify(ZSTD_isError(next_to_read_) == 0U, "ZSTD_initDStream() error");
   }
 
   std::optional<std::string_view> read(size_t const n) {
@@ -53,7 +53,8 @@ struct zstd_reader {
         auto output = ZSTD_outBuffer{out_.data() + offset_ + out_fill_,
                                      ZSTD_DStreamOutSize(), 0};
         next_to_read_ = ZSTD_decompressStream(dstream_.get(), &output, &input);
-        verify(!ZSTD_isError(next_to_read_), ZSTD_getErrorName(next_to_read_));
+        verify(ZSTD_isError(next_to_read_) == 0U,
+               ZSTD_getErrorName(next_to_read_));
         out_fill_ += output.pos;
       }
     }

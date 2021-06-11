@@ -84,7 +84,7 @@ struct mmap_reader {
 
     static void* mmap(HANDLE f, size_t const size) {
       DWORD size_l = static_cast<DWORD>(size);
-      DWORD size_h = size >> 32u;
+      DWORD size_h = size >> 32U;
       auto const fm =
           CreateFileMapping(f, nullptr, PAGE_READONLY, size_h, size_l, 0);
       if (fm == nullptr) {
@@ -117,7 +117,7 @@ struct mmap_reader {
   }
 
   float progress() const {
-    return (it_ - m_.ptr()) / static_cast<float>(m_.size());
+    return static_cast<float>(it_ - m_.ptr()) / static_cast<float>(m_.size());
   }
 
   memory_map m_;

@@ -11,20 +11,24 @@ jobs:
     runs-on: windows-latest
 
     strategy:
+      fail-fast: false
       matrix:
         mode: [Debug, Release]
 
     steps:
     - uses: actions/checkout@v2
-    - uses: microsoft/setup-msbuild@v1.0.0
-
-    - name: CMake
-      run: cmake -G "Visual Studio 16 2019" -A x64 -S . -B build
+    - uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Build
-      run: cmake --build build --target tar-test --config ${{ matrix.mode }}
+      run: |
+        $devShell = &"${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -find **\Microsoft.VisualStudio.DevShell.dll
+        $installPath = &"${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationpath
+        Import-Module $devShell
+        Enter-VsDevShell -VsInstallPath $installPath -SkipAutomaticLocation -DevCmdArguments "-arch=amd64"
+        cmake -GNinja -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.mode }}
+        cmake --build build --target tar-test
 
     - name: Run tests
       run: |
         cd build
-        ${{ matrix.mode }}\tar-test.exe
+        .\tar-test.exe

@@ -36,8 +36,8 @@ inline bool is_end_of_archive(std::string_view header) {
 }
 
 inline bool check_checksum(std::string_view p) {
-  auto u = 0u;
-  for (auto n = 0u; n < 512; ++n) {
+  auto u = 0U;
+  for (auto n = 0U; n < 512; ++n) {
     if (n < 148 || n > 155) {
       u += static_cast<unsigned char>(p[n]);
     } else {
@@ -56,7 +56,7 @@ inline unsigned next_multiple_512(unsigned n) {
   if (n == 0) {
     return 0;
   } else {
-    unsigned a;
+    unsigned a = 0;
     a = n - 1;
     a = a >> 9;
     a = a + 1;

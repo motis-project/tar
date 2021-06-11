@@ -68,8 +68,7 @@ struct mmap_reader {
       }
     }
 
-    memory_map(memory_map&& o) noexcept
-        : f_{std::move(o.f_)}, fmap_{std::move(o.fmap_)} {
+    memory_map(memory_map&& o) noexcept : f_{std::move(o.f_)}, fmap_{o.fmap_} {
       o.fmap_ = nullptr;
     }
 
@@ -108,7 +107,7 @@ struct mmap_reader {
   }
 
   float progress() const {
-    return (it_ - m_.ptr()) / static_cast<float>(m_.size());
+    return static_cast<float>(it_ - m_.ptr()) / static_cast<float>(m_.size());
   }
 
   memory_map m_;
