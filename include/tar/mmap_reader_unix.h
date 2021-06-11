@@ -68,8 +68,7 @@ struct mmap_reader {
       }
     }
 
-    memory_map(memory_map&& o) noexcept
-        : f_{std::move(o.f_)}, fmap_{std::move(o.fmap_)} {
+    memory_map(memory_map&& o) noexcept : f_{std::move(o.f_)}, fmap_{o.fmap_} {
       o.fmap_ = nullptr;
     }
 
