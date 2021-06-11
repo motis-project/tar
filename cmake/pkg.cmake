@@ -4,6 +4,8 @@ if(NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/deps")
     set(pkg-url "pkg")
   elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set(pkg-url "pkg.exe")
+  elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    set(pkg-url "pkgosx")
   else()
     message(STATUS "Not downloading pkg tool. Using pkg from PATH.")
     set(pkg-bin "pkg")
@@ -11,7 +13,7 @@ if(NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/deps")
 
   if (pkg-url)
     if (NOT EXISTS ${pkg-bin})
-      message(STATUS "Downloading pkg binary from https://github.com/motis-project/pkg/releases/latest/download/${pkg-url}")
+      message(STATUS "Downloading pkg binary.")
       file(DOWNLOAD "https://github.com/motis-project/pkg/releases/latest/download/${pkg-url}" ${pkg-bin})
       if (UNIX)
         execute_process(COMMAND chmod +x ${pkg-bin})
@@ -21,20 +23,13 @@ if(NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/deps")
     endif()
   endif()
 
-  message(STATUS "${pkg-bin} -l -h")
+  message(STATUS ${pkg-bin})
   execute_process(
-          COMMAND ${pkg-bin} -l -h
-          WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND ${pkg-bin} -l -h
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   )
 endif()
 
 if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/deps")
   add_subdirectory(deps)
 endif()
-
-set_property(
-        DIRECTORY
-        APPEND
-        PROPERTY CMAKE_CONFIGURE_DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/.pkg"
-)
